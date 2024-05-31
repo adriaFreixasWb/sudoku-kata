@@ -11,6 +11,6 @@ public class ApprovalShould
         var output = Program.Play();
         using (var writer = new StreamWriter(SUDOKU_OUTPUT_FILE_NAME))
         writer.Write(output);
-        Approvals.VerifyAll(output.Split("\r\n"), label: "");
+        Approvals.Verify(output);
     }
 }
