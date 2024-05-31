@@ -10,26 +10,10 @@ namespace SudokuKata
     {
         const string OUTPUT_FILE_NAME = "./SudokuOutput.txt";
         const int SEED = 240883932;
-        static void Play()
+        static string Play()
         {
             #region Construct fully populated board
-            // Prepare empty board
 
-            FileStream ostrm;
-            StreamWriter writer;
-            TextWriter oldOut = Console.Out;
-            try
-            {
-                ostrm = new FileStream(OUTPUT_FILE_NAME, FileMode.OpenOrCreate, FileAccess.Write);
-                writer = new StreamWriter(ostrm);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Cannot open Redirect.txt for writing");
-                Console.WriteLine(e.Message);
-                return;
-            }
-            Console.SetOut(writer);
             BoardFactory boardFactory = new BoardFactory();
             char[][] board = boardFactory.CreateEmpty();
 
@@ -190,9 +174,9 @@ namespace SudokuKata
 
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Final look of the solved board:");
-            Console.WriteLine(string.Join(Environment.NewLine, board.Select(s => new string(s)).ToArray()));
+            OutputService.WriteLine();
+            OutputService.WriteLine("Final look of the solved board:");
+            OutputService.WriteLine(string.Join(Environment.NewLine, board.Select(s => new string(s)).ToArray()));
             #endregion
 
             #region Generate inital board from the completely solved one
@@ -239,15 +223,15 @@ namespace SudokuKata
                 removedPos += 1;
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Starting look of the board to solve:");
-            Console.WriteLine(string.Join("\n", board.Select(s => new string(s)).ToArray()));
+            OutputService.WriteLine();
+            OutputService.WriteLine("Starting look of the board to solve:");
+            OutputService.WriteLine(string.Join("\n", board.Select(s => new string(s)).ToArray()));
             #endregion
 
             #region Prepare lookup structures that will be used in further execution
-            Console.WriteLine();
-            Console.WriteLine(new string('=', 80));
-            Console.WriteLine();
+            OutputService.WriteLine();
+            OutputService.WriteLine(new string('=', 80));
+            OutputService.WriteLine();
 
             Dictionary<int, int> maskToOnesCount = new Dictionary<int, int>();
             maskToOnesCount[0] = 0;
@@ -379,7 +363,7 @@ namespace SudokuKata
                         candidateMasks[singleCandidateIndex] = 0;
                         changeMade = true;
 
-                        Console.WriteLine("({0}, {1}) can only contain {2}.", row + 1, col + 1, candidate + 1);
+                        OutputService.WriteLine("({0}, {1}) can only contain {2}.", row + 1, col + 1, candidate + 1);
                     }
 
                     #endregion
@@ -482,7 +466,7 @@ namespace SudokuKata
 
                             changeMade = true;
 
-                            Console.WriteLine(message);
+                            OutputService.WriteLine(message);
                         }
                     }
 
@@ -545,7 +529,7 @@ namespace SudokuKata
                                         value += 1;
                                     }
 
-                                    Console.WriteLine(
+                                    OutputService.WriteLine(
                                         $"Values {lower} and {upper} in {group.Description} are in cells ({maskCells[0].Row + 1}, {maskCells[0].Column + 1}) and ({maskCells[1].Row + 1}, {maskCells[1].Column + 1}).");
 
                                     foreach (var cell in cells)
@@ -564,7 +548,7 @@ namespace SudokuKata
                                         }
 
                                         string valuesReport = string.Join(", ", valuesToRemove.ToArray());
-                                        Console.WriteLine($"{valuesReport} cannot appear in ({cell.Row + 1}, {cell.Column + 1}).");
+                                        OutputService.WriteLine($"{valuesReport} cannot appear in ({cell.Row + 1}, {cell.Column + 1}).");
 
                                         candidateMasks[cell.Index] &= ~group.Mask;
                                         stepChangeMade = true;
@@ -642,7 +626,7 @@ namespace SudokuKata
 
                                 message.Append(" and other values cannot appear in those cells.");
 
-                                Console.WriteLine(message.ToString());
+                                OutputService.WriteLine(message.ToString());
                             }
 
                             foreach (var cell in groupWithNMasks.CellsWithMask)
@@ -671,7 +655,7 @@ namespace SudokuKata
                                 }
 
                                 message.Append($" cannot appear in cell ({cell.Row + 1}, {cell.Column + 1}).");
-                                Console.WriteLine(message.ToString());
+                                OutputService.WriteLine(message.ToString());
 
                             }
                         }
@@ -972,7 +956,7 @@ namespace SudokuKata
                                 board[rowToWrite][colToWrite] = (char)('0' + state[i]);
                         }
 
-                        Console.WriteLine($"Guessing that {digit1} and {digit2} are arbitrary in {description} (multiple solutions): Pick {finalState[index1]}->({row1 + 1}, {col1 + 1}), {finalState[index2]}->({row2 + 1}, {col2 + 1}).");
+                        OutputService.WriteLine($"Guessing that {digit1} and {digit2} are arbitrary in {description} (multiple solutions): Pick {finalState[index1]}->({row1 + 1}, {col1 + 1}), {finalState[index2]}->({row2 + 1}, {col2 + 1}).");
                     }
                 }
                 #endregion
@@ -980,7 +964,7 @@ namespace SudokuKata
                 if (changeMade)
                 {
                     #region Print the board as it looks after one change was made to it
-                    Console.WriteLine(string.Join(Environment.NewLine, board.Select(s => new string(s)).ToArray()));
+                    OutputService.WriteLine(string.Join(Environment.NewLine, board.Select(s => new string(s)).ToArray()));
                     string code =
                         string.Join(string.Empty, board.Select(s => new string(s)).ToArray())
                             .Replace("-", string.Empty)
@@ -988,25 +972,19 @@ namespace SudokuKata
                             .Replace("|", string.Empty)
                             .Replace(".", "0");
 
-                    Console.WriteLine("Code: {0}", code);
-                    Console.WriteLine();
+                    OutputService.WriteLine("Code: {0}", code);
+                    OutputService.WriteLine();
                     #endregion
                 }
             }
-            Console.SetOut(oldOut);
-            writer.Close();
-            ostrm.Close();
-            Console.WriteLine("Done");
+
+            return OutputService.Text;
         }
 
         static void Main(string[] args)
         {
-            Play();
-            using (var stream = new StreamReader(OUTPUT_FILE_NAME))
-            {
-                Console.Write(stream.ReadToEnd());
-            }
-            
+            var text = Play();
+            Console.Write(text);
             Console.WriteLine();
             Console.Write("Press ENTER to exit... ");
             Console.ReadLine();
