@@ -7,28 +7,14 @@ namespace SudokuKata
 {
     class Program
     {
+        
         static void Play()
         {
             #region Construct fully populated board
             // Prepare empty board
-            string line = "+---+---+---+";
-            string middle = "|...|...|...|";
-            char[][] board = new char[][]
-            {
-                line.ToCharArray(),
-                middle.ToCharArray(),
-                middle.ToCharArray(),
-                middle.ToCharArray(),
-                line.ToCharArray(),
-                middle.ToCharArray(),
-                middle.ToCharArray(),
-                middle.ToCharArray(),
-                line.ToCharArray(),
-                middle.ToCharArray(),
-                middle.ToCharArray(),
-                middle.ToCharArray(),
-                line.ToCharArray()
-            };
+            
+            BoardFactory boardFactory = new BoardFactory();
+            char[][] board = boardFactory.CreateEmpty();
 
             // Construct board to be solved
             Random rng = new Random();
