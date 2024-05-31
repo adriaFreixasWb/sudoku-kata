@@ -7,7 +7,7 @@ namespace SudokuKata
 {
     class Program
     {
-        
+        const int SEED = 240883932;
         static void Play()
         {
             #region Construct fully populated board
@@ -17,7 +17,7 @@ namespace SudokuKata
             char[][] board = boardFactory.CreateEmpty();
 
             // Construct board to be solved
-            Random rng = new Random();
+            RandomService rng = new RandomService(SEED);
 
             // Top element is current state of the board
             Stack<int[]> stateStack = new Stack<int[]>();
