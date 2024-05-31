@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -7,12 +8,28 @@ namespace SudokuKata
 {
     class Program
     {
+        const string OUTPUT_FILE_NAME = "./SudokuOutput.txt";
         const int SEED = 240883932;
         static void Play()
         {
             #region Construct fully populated board
             // Prepare empty board
-            
+
+            FileStream ostrm;
+            StreamWriter writer;
+            TextWriter oldOut = Console.Out;
+            try
+            {
+                ostrm = new FileStream(OUTPUT_FILE_NAME, FileMode.OpenOrCreate, FileAccess.Write);
+                writer = new StreamWriter(ostrm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Cannot open Redirect.txt for writing");
+                Console.WriteLine(e.Message);
+                return;
+            }
+            Console.SetOut(writer);
             BoardFactory boardFactory = new BoardFactory();
             char[][] board = boardFactory.CreateEmpty();
 
@@ -976,12 +993,20 @@ namespace SudokuKata
                     #endregion
                 }
             }
+            Console.SetOut(oldOut);
+            writer.Close();
+            ostrm.Close();
+            Console.WriteLine("Done");
         }
 
         static void Main(string[] args)
         {
             Play();
-
+            using (var stream = new StreamReader(OUTPUT_FILE_NAME))
+            {
+                Console.Write(stream.ReadToEnd());
+            }
+            
             Console.WriteLine();
             Console.Write("Press ENTER to exit... ");
             Console.ReadLine();
