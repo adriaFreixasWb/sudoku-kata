@@ -14,9 +14,9 @@ namespace SudokuKata
         {
             _randomizer = new Random();
         }
-        public RandomService(int seed) 
-        { 
-            _randomizer = new Random(seed); 
+        public RandomService(int seed)
+        {
+            _randomizer = new Random(seed);
         }
         public int Next() => _randomizer.Next();
         public int Next(int maxValue) => _randomizer.Next(maxValue);

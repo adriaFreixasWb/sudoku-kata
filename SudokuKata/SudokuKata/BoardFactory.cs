@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SudokuKata
+﻿namespace SudokuKata
 {
     public class BoardFactory
     {
@@ -29,6 +23,6 @@ namespace SudokuKata
                 line.ToCharArray()
             };
             return board;
-        } 
+        }
     }
 }
